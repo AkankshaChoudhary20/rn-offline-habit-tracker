@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Offline Habit Tracker",
+    "slug": "rn-offline-habit-tracker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.akankshachoudhary.habittracker"
+    },
+    "android": {
+      "package": "com.akankshachoudhary.habittracker",
+      "adaptiveIcon": {
+        "backgroundColor": "#F9FAFB"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
