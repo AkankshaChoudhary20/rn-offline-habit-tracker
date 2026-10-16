@@ -72,16 +72,20 @@ export function calculateStreak(checkIns: CheckIn[], asOfDate: string = toDateOn
 
   // Current streak: only "alive" if the most recent completion is today or
   // yesterday relative to asOfDate. Otherwise the streak is broken (0).
-  const gapToToday = daysBetween(lastCompletedDate, asOfDate);
+  // Future check-ins cannot extend or hide a streak that is active today.
+  // Keep the whole-history longest streak/last-completion metadata above.
+  const currentDates = completedDates.filter(date => daysBetween(date, asOfDate) >= 0);
+  const lastCurrentDate = currentDates[currentDates.length - 1];
+  const gapToToday = lastCurrentDate ? daysBetween(lastCurrentDate, asOfDate) : Infinity;
   let currentStreak = 0;
-  if (gapToToday <= 1) {
+  if (gapToToday >= 0 && gapToToday <= 1) {
     currentStreak = 1;
-    let cursor = lastCompletedDate;
-    for (let i = completedDates.length - 2; i >= 0; i--) {
-      const gap = daysBetween(completedDates[i], cursor);
+    let cursor = lastCurrentDate;
+    for (let i = currentDates.length - 2; i >= 0; i--) {
+      const gap = daysBetween(currentDates[i], cursor);
       if (gap === 1) {
         currentStreak += 1;
-        cursor = completedDates[i];
+        cursor = currentDates[i];
       } else {
         break;
       }
