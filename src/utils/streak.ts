@@ -10,8 +10,12 @@ import { CheckIn, StreakInfo } from '../types/models';
 
 /** Parses a YYYY-MM-DD string as a UTC date so day-diff math is DST-safe. */
 function parseDateOnly(date: string): Date {
-  const [y, m, d] = date.split('-').map(Number);
-  return new Date(Date.UTC(y, m - 1, d));
+  const parsed = new Date(`${date}T00:00:00.000Z`);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+      Number.isNaN(parsed.getTime()) || toDateOnlyString(parsed) !== date) {
+    throw new RangeError('Expected a valid YYYY-MM-DD calendar date');
+  }
+  return parsed;
 }
 
 function toDateOnlyString(d: Date): string {
@@ -41,11 +45,15 @@ function daysBetween(a: string, b: string): number {
  * - `longestStreak` scans the whole history for the longest consecutive run.
  */
 export function calculateStreak(checkIns: CheckIn[], asOfDate: string = toDateOnlyString(new Date())): StreakInfo {
+  parseDateOnly(asOfDate);
   const completedDates = Array.from(
     new Set(
       checkIns
         .filter((c) => c.completed && !c.deleted)
         .map((c) => c.date)
+        .filter(date => {
+          try { parseDateOnly(date); return true; } catch { return false; }
+        })
     )
   ).sort();
 
