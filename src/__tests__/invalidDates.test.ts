@@ -1,6 +1,6 @@
 import { calculateStreak, daysBetween } from '../utils/streak';
 import { CheckIn } from '../types/models';
-const checkIn = (date: string): CheckIn => ({ id: date, habitId: 'habit', date, completed: true, deleted: false, updatedAt: '2026-01-01T00:00:00Z' });
+const checkIn = (date: string): CheckIn => ({ id: date, habitId: 'habit', date, completed: true, deleted: false, note: '', dirty: false, createdAt: '2026-01-01T00:00:00Z', updatedAt: '2026-01-01T00:00:00Z' });
 
 test('invalid stored dates never distort streaks or last completion', () => {
   const rows = ['2026-03-01', '2026-03-02', '2026-02-30', 'not-a-date', '2026-3-3', '2026-13-01'].map(checkIn);
