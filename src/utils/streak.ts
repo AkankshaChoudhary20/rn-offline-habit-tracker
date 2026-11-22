@@ -6,7 +6,7 @@
  * device/emulator/runtime.
  */
 
-import { CheckIn, StreakInfo } from '../types/models';
+import type { CheckIn, StreakInfo } from '../types/models';
 
 /** Parses a YYYY-MM-DD string as a UTC date so day-diff math is DST-safe. */
 function parseDateOnly(date: string): Date {
@@ -20,6 +20,14 @@ function parseDateOnly(date: string): Date {
 
 function toDateOnlyString(d: Date): string {
   return d.toISOString().slice(0, 10);
+}
+
+function localToday(): string {
+  const today = new Date();
+  const year = String(today.getFullYear()).padStart(4, '0');
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 function addDays(date: string, days: number): string {
@@ -44,7 +52,7 @@ function daysBetween(a: string, b: string): number {
  *   today hasn't been checked in yet, but IS broken once a day is skipped).
  * - `longestStreak` scans the whole history for the longest consecutive run.
  */
-export function calculateStreak(checkIns: CheckIn[], asOfDate: string = toDateOnlyString(new Date())): StreakInfo {
+export function calculateStreak(checkIns: CheckIn[], asOfDate: string = localToday()): StreakInfo {
   parseDateOnly(asOfDate);
   const completedDates = Array.from(
     new Set(
